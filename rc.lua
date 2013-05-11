@@ -191,30 +191,28 @@ local widget = {
 }
 
 mydmenu = dmenu({
-    chromium = "chromium",
-    luakit = "luakit",
-    gvim = "gvim",
-    vifm = terminal .. " -e vifm",
-    ["vifm/mus"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
-    ["vifm/down"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
-    ["vifm/torrent"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/Torrent",
-    leafpad = "leafpad",
-    firefox = function()
+    ["1)chromium"] = "chromium",
+    ["2)dwb"] = "dwb",
+    ["3)gvim"] = "gvim",
+    ["4)vifm"] = terminal .. " -e vifm",
+    ["41)vifm/mus"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
+    ["42)vifm/down"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
+    ["43)vifm/torrent"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/Torrent",
+    ["5)leafpad"] = "leafpad",
+    ["6)firefox"] = function()
         awful.tag.viewonly(tags[1][5])
         awful.client.run_or_raise("firefox", function(c)
             return awful.rules.match(c, {class = 'Firefox'})
         end)
     end,
-    luakit = "luakit",
-    vim = terminal .. " -e vim",
-    rox = "rox",
-    ["suspend"] = function()
+    ["7)rox"] = "rox",
+    ["81)suspend"] = function()
         vicious.suspend()
         awful.util.spawn("systemctl suspend")
         vicious.activate()
     end,
-    ["reboot"] = "systemctl reboot",
-    ["poweroff"] = "systemctl poweroff",
+    ["82)reboot"] = "systemctl reboot",
+    ["83)poweroff"] = "systemctl poweroff",
     --[[
     sail = function()
         awful.tag.viewonly(tags[1][3])

@@ -20,6 +20,7 @@ local vicious = require("vicious")
 
 -- Local
 local separator = require("lib/separator")
+local ipaddr = require("lib/ipaddr")
 local dmenu = require("lib/dmenu")
 
 -- Add vim style nav keys to menus
@@ -86,10 +87,8 @@ end
 
 
 -- Default apps
-local terminal = "/usr/bin/urxvtc -fn 'xft:Consolas-9' -fb 'xft:Consolas-9' -letsp -1 -pe tabbedex -depth 33"
-local terminal2 = "urxvtc -pe tabbedex"
-local terminal3 = "urxvtc -fn 'xft:erusfont-10' -fb 'xft:erusfont-10' -pe tabbedex"
-local terminal4 = "urxvtc -fn 'xft:cure-9' -fb 'xft:cure-9' -pe tabbedex"
+local terminal = "/usr/bin/urxvtc"
+local terminal2 = terminal .. " -fn 'xft:Dina:pixelsize=8' -fb 'xft:Dina:pixelsize=8'"
 local editor = "vim"
 local editor_cmd = terminal .. " -e " .. editor
 
@@ -123,7 +122,7 @@ local tags = {
         layouts[2],
         layouts[1],
         layouts[1],
-        layouts[1],
+        layouts[10],
         layouts[10]
     }
 }
@@ -188,40 +187,33 @@ local widget = {
         end, 120, "wlp3s0")
         return wifi
     end)(),
+
+    -- IP ADDRESS
+    ipaddr = ipaddr()
 }
 
+local function to_tag( tag, app, class )
+    awful.tag.viewonly(tags[1][tag])
+    awful.client.run_or_raise(app, function(c)
+        return awful.rules.match(c, {class = class})
+    end)
+end
+
 mydmenu = dmenu({
-    ["1)chromium"] = "chromium",
-    ["2)dwb"] = "dwb",
-    ["3)gvim"] = "gvim",
-    ["4)vifm"] = terminal .. " -e vifm",
-    ["41)vifm/mus"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
-    ["42)vifm/down"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
-    ["43)vifm/torrent"] = terminal .. " -e vifm " .. os.getenv("HOME") .. "/Torrent",
-    ["5)leafpad"] = "leafpad",
-    ["6)firefox"] = function()
-        awful.tag.viewonly(tags[1][5])
-        awful.client.run_or_raise("firefox", function(c)
-            return awful.rules.match(c, {class = 'Firefox'})
-        end)
-    end,
-    ["7)rox"] = "rox",
-    ["81)suspend"] = function()
+    chromium   = "chromium",
+    dwb        = "dwb",
+    gvim       = function() to_tag( 4, "gvim", "Gvim" ) end,
+    vifm       = terminal .. " -e vifm",
+    music      = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
+    down       = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
+    pidgin     = function() to_tag( 6, "pidgin", "Pidgin") end,
+    firefox    = function() to_tag( 5, "firefox", "Firefox" ) end,
+    virtualbox = function() to_tag( 9, "virtualbox", "VirtualBox" ) end,
+    suspend    = function()
         vicious.suspend()
         awful.util.spawn("systemctl suspend")
         vicious.activate()
     end,
-    ["82)reboot"] = "systemctl reboot",
-    ["83)poweroff"] = "systemctl poweroff",
-    --[[
-    sail = function()
-        awful.tag.viewonly(tags[1][3])
-        local exec = terminal2 .. ' -name sail -e ssh sail -t tmux -u attach'
-        awful.client.run_or_raise(exec, function (c)
-            return awful.rules.match(c, {instance = 'sail'})
-        end)
-    end
-    --]]
 })
 
 ---------------------------------------------------------------------------
@@ -279,7 +271,7 @@ for s = 1, screen.count() do
         right_layout:add(widget.separator)
     end
 
-    for _, w in ipairs({"wifi", "battery", "cpu", "clock"}) do
+    for _, w in ipairs({"wifi", "ipaddr", "battery", "cpu", "clock"}) do
         right_layout:add(widget[w])
         right_layout:add(widget.separator)
     end
@@ -354,8 +346,6 @@ local globalkeys = awful.util.table.join(
     -- Exec terminals, quit and restart
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal2) end),
-    --awful.key({ modkey, "Control" }, "Return", function () awful.util.spawn(terminal3) end),
-    --awful.key({ modkey, "Shift", "Control" }, "Return", function () awful.util.spawn(terminal4) end),
     -- Too dangerous to restart with the keyboard
     -- awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
@@ -378,7 +368,7 @@ local globalkeys = awful.util.table.join(
     -- Move to the next screen
     --awful.key({ modkey }, "s", function () awful.screen.focus_relative(1) end),
     awful.key({ modkey }, "s", function ()
-        awful.util.spawn("/home/sge/sbin/dell-dock", false)
+        awful.util.spawn("/home/sge/sbin/switch-screens", false)
     end),
 
     -- Increase/decrease master window width

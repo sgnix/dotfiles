@@ -1,6 +1,6 @@
 -- Standard awesome library
 local gears = require("gears")
-local awful = require("awful")
+awful = require("awful")
 awful.rules = require("awful.rules")
 require("awful.autofocus")
 -- Widget and layout library
@@ -9,7 +9,7 @@ local wibox = require("wibox")
 local homedir = os.getenv("HOME") .. "/.config/awesome"
 
 -- Theme handling library and local theme
-local beautiful = require("beautiful")
+beautiful = require("beautiful")
 beautiful.init(homedir .. "/themes/nice-and-clean-theme/theme.lua")
 
 -- Notification library
@@ -22,6 +22,7 @@ local vicious = require("vicious")
 local separator = require("lib/separator")
 local ipaddr = require("lib/ipaddr")
 local dmenu = require("lib/dmenu")
+local layoutchar = require("lib/layoutchar")
 
 -- Add vim style nav keys to menus
 awful.menu.menu_keys = {
@@ -93,37 +94,28 @@ local editor = "vim"
 local editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
-local modkey = "Mod4"
+local modkey = os.getenv("AWESOME_TEST") and "135" or "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts = {
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.magnifier,
     awful.layout.suit.floating
-    -- awful.layout.suit.max,
-    -- awful.layout.suit.max.fullscreen,
 }
 
 -- Define a tag table which hold all screen tags.
 local tags = {
     names   = { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
     layouts = {
+        layouts[1],
+        layouts[1],
+        layouts[1],
         layouts[2],
+        layouts[1],
         layouts[1],
         layouts[1],
         layouts[3],
-        layouts[2],
-        layouts[1],
-        layouts[1],
-        layouts[10],
-        layouts[10]
+        layouts[3]
     }
 }
 
@@ -247,7 +239,7 @@ for s = 1, screen.count() do
     chrome.promptbox[s] = awful.widget.prompt()
 
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
-    chrome.layoutbox[s] = awful.widget.layoutbox(s)
+    chrome.layoutbox[s] = layoutchar(s)
 
     -- Create a taglist widget
     chrome.taglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, chrome.taglist.buttons)
@@ -258,6 +250,8 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(chrome.taglist[s])
+    left_layout:add(widget.separator)
+    left_layout:add(chrome.layoutbox[s])
     left_layout:add(widget.separator)
     left_layout:add(chrome.promptbox[s])
     if s == 1 then
@@ -275,7 +269,6 @@ for s = 1, screen.count() do
         right_layout:add(widget[w])
         right_layout:add(widget.separator)
     end
-    right_layout:add(chrome.layoutbox[s])
 
     -- Now bring it all together
     local layout = wibox.layout.align.horizontal()

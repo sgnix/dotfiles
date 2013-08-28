@@ -1,37 +1,32 @@
+
+-- Vars
+local homedir    = os.getenv("HOME") .. "/.config/awesome"
+local terminal   = "/usr/bin/urxvtc"
+local terminal2  = terminal .. " -fn 'xft:Dina:pixelsize=8' -fb 'xft:Dina:pixelsize=8'"
+local editor     = "vim"
+local editor_cmd = terminal .. " -e " .. editor
+local modkey     = os.getenv("AWESOME_TEST") and "135" or "Mod4"
+
 -- Standard awesome library
-local gears = require("gears")
 awful = require("awful")
 awful.rules = require("awful.rules")
 require("awful.autofocus")
--- Widget and layout library
-local wibox = require("wibox")
 
-local homedir = os.getenv("HOME") .. "/.config/awesome"
+-- Libs
+local wibox      = require("wibox")
+local naughty    = require("naughty")
+local vicious    = require("vicious")
+local separator  = require("lib/separator")
+local fread      = require("lib/fread")
+local dmenu      = require("lib/dmenu")
+local layoutchar = require("lib/layoutchar")
+local beautiful  = require("beautiful")
+
+-- Layouts
+awful.layout.suit.monocle = require("layout/monocle")
 
 -- Theme handling library and local theme
-beautiful = require("beautiful")
-beautiful.init(homedir .. "/themes/nice-and-clean-theme/theme.lua")
-
--- Notification library
-local naughty = require("naughty")
-
--- Vicious
-local vicious = require("vicious")
-
--- Local
-local separator = require("lib/separator")
-local ipaddr = require("lib/ipaddr")
-local dmenu = require("lib/dmenu")
-local layoutchar = require("lib/layoutchar")
-
--- Add vim style nav keys to menus
-awful.menu.menu_keys = {
-     up    = { "Up", "k" },
-     down  = { "Down", "j" },
-     exec  = { "Return", "Right", "l" },
-     back  = { "Left", "h" },
-     close = { "Escape" }
-}
+beautiful.init(homedir .. "/theme.lua")
 
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -86,36 +81,23 @@ local function move_all_clients( a, b, tags )
     awful.screen.focus(b)
 end
 
-
--- Default apps
-local terminal = "/usr/bin/urxvtc"
-local terminal2 = terminal .. " -fn 'xft:Dina:pixelsize=8' -fb 'xft:Dina:pixelsize=8'"
-local editor = "vim"
-local editor_cmd = terminal .. " -e " .. editor
-
--- Default modkey.
-local modkey = os.getenv("AWESOME_TEST") and "135" or "Mod4"
-
--- Table of layouts to cover with awful.layout.inc, order matters.
-local layouts = {
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.floating
-}
+------------------------------------------------------------------------
+-- Tags and layouts
+------------------------------------------------------------------------
 
 -- Define a tag table which hold all screen tags.
 local tags = {
     names   = { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
     layouts = {
-        layouts[1],
-        layouts[1],
-        layouts[1],
-        layouts[2],
-        layouts[1],
-        layouts[1],
-        layouts[1],
-        layouts[3],
-        layouts[3]
+        awful.layout.suit.tile,
+        awful.layout.suit.tile,
+        awful.layout.suit.monocle,
+        awful.layout.suit.tile.bottom,
+        awful.layout.suit.tile,
+        awful.layout.suit.tile,
+        awful.layout.suit.tile,
+        awful.layout.suit.floating,
+        awful.layout.suit.floating,
     }
 }
 
@@ -126,16 +108,43 @@ end
 
 -- Configure some tags
 awful.tag.setmwfact(0.65, tags[1][1])  -- Browser and inspector
-awful.tag.setmwfact(0.7, tags[1][3])   -- Sparkpay work
 awful.tag.setmwfact(0.7, tags[1][4])   -- gvim + 2 terms
 
---
+----------------------------------------------------------------
 -- Widget table
---
+----------------------------------------------------------------
+
 local widget = {
 
+    -- DMenu
+    dmenu = (function()
+        local function to_tag( tag, app, class )
+            awful.tag.viewonly(tags[1][tag])
+            awful.client.run_or_raise(app, function(c)
+                return awful.rules.match(c, {class = class})
+            end)
+        end
+
+        return dmenu({
+            chromium   = "chromium",
+            dwb        = "dwb",
+            gvim       = function() to_tag( 4, "gvim", "Gvim" ) end,
+            vifm       = terminal .. " -e vifm",
+            music      = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
+            down       = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
+            pidgin     = function() to_tag( 6, "pidgin", "Pidgin") end,
+            firefox    = function() to_tag( 5, "firefox", "Firefox" ) end,
+            virtualbox = function() to_tag( 9, "virtualbox", "VirtualBox" ) end,
+            suspend    = function()
+                vicious.suspend()
+                awful.util.spawn("systemctl suspend")
+                vicious.activate()
+            end,
+        })
+    end)(),
+
     -- Clock
-    clock = awful.widget.textclock('%a %b %d, <span foreground="white">%I:%M</span> %p'),
+    clock = awful.widget.textclock('%a %b %d, <span foreground="' .. beautiful.clock_fg .. '">%I:%M</span> %p'),
 
     -- Separator
     separator = separator(),
@@ -180,33 +189,12 @@ local widget = {
         return wifi
     end)(),
 
+    -- Weather
+    weather = fread( homedir .. "/bin/weather.sh 97223", 30 * 60 ),
+
     -- IP ADDRESS
-    ipaddr = ipaddr()
+    ipaddr = fread( "curl -s http://icanhazip.com", 60 * 60 ),
 }
-
-local function to_tag( tag, app, class )
-    awful.tag.viewonly(tags[1][tag])
-    awful.client.run_or_raise(app, function(c)
-        return awful.rules.match(c, {class = class})
-    end)
-end
-
-mydmenu = dmenu({
-    chromium   = "chromium",
-    dwb        = "dwb",
-    gvim       = function() to_tag( 4, "gvim", "Gvim" ) end,
-    vifm       = terminal .. " -e vifm",
-    music      = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
-    down       = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
-    pidgin     = function() to_tag( 6, "pidgin", "Pidgin") end,
-    firefox    = function() to_tag( 5, "firefox", "Firefox" ) end,
-    virtualbox = function() to_tag( 9, "virtualbox", "VirtualBox" ) end,
-    suspend    = function()
-        vicious.suspend()
-        awful.util.spawn("systemctl suspend")
-        vicious.activate()
-    end,
-})
 
 ---------------------------------------------------------------------------
 -- Chrome table
@@ -255,7 +243,7 @@ for s = 1, screen.count() do
     left_layout:add(widget.separator)
     left_layout:add(chrome.promptbox[s])
     if s == 1 then
-        left_layout:add(mydmenu.textbox)
+        left_layout:add(widget.dmenu.textbox)
     end
 
     -- Widgets that are aligned to the right
@@ -265,7 +253,7 @@ for s = 1, screen.count() do
         right_layout:add(widget.separator)
     end
 
-    for _, w in ipairs({"wifi", "ipaddr", "battery", "cpu", "clock"}) do
+    for _, w in ipairs({"weather", "wifi", "ipaddr", "battery", "cpu", "clock"}) do
         right_layout:add(widget[w])
         right_layout:add(widget.separator)
     end
@@ -376,21 +364,10 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift", "Control" }, "]", function () awful.tag.incncol( 1) end),
     awful.key({ modkey, "Shift", "Control" }, "[", function () awful.tag.incncol(-1) end),
 
-    -- Switch layouts
-    awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
-    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
-
     -- Move all left or right
     --[[
     awful.key({ modkey, "Shift"   }, ",", function () move_all_clients(1, 2, tags) end),
     awful.key({ modkey, "Shift"   }, ".", function () move_all_clients(2, 1, tags) end),
-    --]]
-
-    -- Backtick shows a menu with all open windows
-    --[[
-    awful.key({ modkey }, "`", function ()
-        awful.menu.clients({ width = 400 }, { keygrabber = true })
-    end),
     --]]
 
     -- Sound
@@ -453,18 +430,37 @@ local globalkeys = awful.util.table.join(
 
     -- Execute
 	awful.key({ modkey }, "e", function ()
-        mydmenu:show()
-	end)
+        widget.dmenu:show()
+	end),
 
+    ---------------------------------------------------
+    -- LAYOUTS
+    ---------------------------------------------------
+
+    -- Monocle
+    awful.key({ modkey }, "m", function()
+        awful.layout.set( awful.layout.suit.monocle )
+    end),
+
+    -- Floating
+    awful.key({ modkey }, "f", function()
+        awful.layout.set( awful.layout.suit.floating )
+    end),
+
+    -- Tile
+    awful.key({ modkey }, "t", function()
+        if awful.layout.get().name == "tile" then
+            awful.layout.set( awful.layout.suit.tile.bottom )
+        else
+            awful.layout.set( awful.layout.suit.tile )
+        end
+    end)
 )
 
 -------------------------------------------------------------------------------
 -- Client keys
 -------------------------------------------------------------------------------
 clientkeys = awful.util.table.join(
-
-    -- Fullscreen
-    awful.key({ modkey }, "f", function(c) c.fullscreen = not c.fullscreen end),
 
     -- Close window
     awful.key({ modkey }, "w", function(c) c:kill() end),
@@ -482,12 +478,6 @@ clientkeys = awful.util.table.join(
 
     -- Set on top
     awful.key({ modkey }, "t", function(c) c.ontop = not c.ontop end),
-
-    -- Maximize
-    awful.key({ modkey }, "m", function(c)
-        c.maximized_horizontal = not c.maximized_horizontal
-        c.maximized_vertical   = not c.maximized_vertical
-    end),
 
     -- Set sticky (stays on all tags)
     awful.key({ modkey, "Shift" }, "/", function(c) c.sticky = not c.sticky end)
@@ -628,7 +618,7 @@ end)
 
 -- Focused client gets a shiny border
 client.connect_signal("focus", function(c)
-    c.border_color = "#00ff00"
+    c.border_color = beautiful.border_high;
 
     if focus_timer then focus_timer:stop() end
     focus_timer = timer({timeout = 3})

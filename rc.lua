@@ -16,11 +16,11 @@ require("awful.autofocus")
 local wibox      = require("wibox")
 local naughty    = require("naughty")
 local vicious    = require("vicious")
+local beautiful  = require("beautiful")
 local separator  = require("lib/separator")
 local fread      = require("lib/fread")
 local dmenu      = require("lib/dmenu")
 local layoutchar = require("lib/layoutchar")
-local beautiful  = require("beautiful")
 
 -- Layouts
 awful.layout.suit.monocle = require("layout/monocle")
@@ -180,20 +180,26 @@ local widget = {
         return battery
     end)(),
 
-    -- WIFI
+    -- Wifi
     wifi = (function()
-        local wifi = wibox.widget.textbox()
-        vicious.register(wifi, vicious.widgets.wifi, function(w, args)
-            return args["{ssid}"]
-        end, 120, "wlp3s0")
-        return wifi
+        local obj = fread{ url = homedir .. "/bin/wifi.sh wlp3s0" }
+        return obj.w
     end)(),
 
     -- Weather
-    weather = fread( homedir .. "/bin/weather.sh 97223", 30 * 60 ),
+    weather = (function()
+        local obj = fread{
+            url     = homedir .. "/bin/weather.sh 97223",
+            timeout = 20 * 60
+        }
+        return obj.w
+    end)(),
 
     -- IP ADDRESS
-    ipaddr = fread( "curl -s http://icanhazip.com", 60 * 60 ),
+    ipaddr = (function()
+        local obj = fread{ url = "curl -s http://icanhazip.com" }
+        return obj.w
+    end)()
 }
 
 ---------------------------------------------------------------------------
@@ -204,6 +210,7 @@ local chrome = {
     promptbox = {},
     layoutbox = {},
     taglist   = {},
+    tcount    = {}
 }
 
 ---------------------------------------------------------------------------
@@ -226,11 +233,23 @@ for s = 1, screen.count() do
     -- Create a promptbox for each screen
     chrome.promptbox[s] = awful.widget.prompt()
 
-    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
+    -- Create an imagebox widget which contains an icon indicating which layout we're using.
     chrome.layoutbox[s] = layoutchar(s)
 
     -- Create a taglist widget
     chrome.taglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, chrome.taglist.buttons)
+
+    -- Client count
+    local client_count = (function()
+        local w = wibox.widget.textbox()
+        local function update()
+            w:set_text(" " .. #(awful.client.visible()))
+        end
+        update()
+        client.connect_signal("tagged", update)
+        client.connect_signal("untagged", update)
+        return w
+    end)()
 
     -- Create the wibox
     chrome.wibox[s] = awful.wibox({ position = "top", screen = s })
@@ -240,6 +259,7 @@ for s = 1, screen.count() do
     left_layout:add(chrome.taglist[s])
     left_layout:add(widget.separator)
     left_layout:add(chrome.layoutbox[s])
+    left_layout:add(client_count)
     left_layout:add(widget.separator)
     left_layout:add(chrome.promptbox[s])
     if s == 1 then
@@ -588,7 +608,10 @@ for _, name in ipairs(floaters) do
     })
 end
 
+-------------------------------------------------------------
 -- Signals
+-------------------------------------------------------------
+
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c, startup)
     -- Add a titlebar

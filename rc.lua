@@ -334,6 +334,10 @@ local globalkeys = awful.util.table.join(
             awful.client.swap.bydirection("right")
         end),
 
+    -- Screen changing
+    awful.key({ modkey }, "F1", function() awful.screen.focus(2) end),
+    awful.key({ modkey }, "F2", function() awful.screen.focus(1) end),
+
     -- Exec terminals, quit and restart
     awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "Return", function () awful.util.spawn(terminal2) end),

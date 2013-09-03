@@ -243,11 +243,12 @@ for s = 1, screen.count() do
     local client_count = (function()
         local w = wibox.widget.textbox()
         local function update()
-            w:set_text(" " .. #(awful.client.visible()))
+            w:set_text(" " .. #(awful.client.visible(s)))
         end
         update()
         client.connect_signal("tagged", update)
         client.connect_signal("untagged", update)
+        tag.connect_signal("property::selected", update)
         return w
     end)()
 
@@ -291,19 +292,17 @@ end
 -- Global key bindings
 ---------------------------------------------------------------------------
 local globalkeys = awful.util.table.join(
-    awful.key({ modkey }, "Left",   awful.tag.viewprev       ),
-    awful.key({ modkey }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey }, "Escape", awful.tag.history.restore),
 
     -- Moving around
     awful.key({ modkey }, "j",
         function ()
-            awful.client.focus.bydirection("down")
+            awful.client.focus.byidx(1)
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey }, "k",
         function ()
-            awful.client.focus.bydirection("up")
+            awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey }, "l",
@@ -316,20 +315,15 @@ local globalkeys = awful.util.table.join(
             awful.client.focus.bydirection("left")
             if client.focus then client.focus:raise() end
         end),
-    awful.key({ modkey }, "n",
-        function ()
-            awful.client.focus.byidx(1)
-            if client.focus then client.focus:raise() end
-        end),
 
     -- Swapping
     awful.key({ modkey, "Shift" }, "j",
         function ()
-            awful.client.swap.bydirection("down")
+            awful.client.swap.byidx(1)
         end),
     awful.key({ modkey, "Shift" }, "k",
         function ()
-            awful.client.swap.bydirection("up")
+            awful.client.swap.byidx(-1)
         end),
     awful.key({ modkey, "Shift" }, "h",
         function ()
@@ -339,14 +333,10 @@ local globalkeys = awful.util.table.join(
         function ()
             awful.client.swap.bydirection("right")
         end),
-    awful.key({ modkey, "Shift"   }, "n",
-        function ()
-            awful.client.swap.byidx(1)
-        end),
 
     -- Exec terminals, quit and restart
-    awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
-    awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal2) end),
+    awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ modkey, "Control" }, "Return", function () awful.util.spawn(terminal2) end),
     -- Too dangerous to restart with the keyboard
     -- awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
@@ -407,7 +397,7 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey }, "x", function () chrome.promptbox[mouse.screen]:run() end),
 
     -- Invert screen
-    awful.key({ modkey }, "i", function ()
+    awful.key({ modkey, "Shift" }, "i", function ()
         awful.util.spawn("xcalib -i -a", false)
     end),
 
@@ -419,34 +409,6 @@ local globalkeys = awful.util.table.join(
           awful.util.eval, nil,
           awful.util.getdir("cache") .. "/history_eval")
       end),
-
-    -- Execute a Lua script
-    awful.key({ modkey, "Control" }, "x", function ()
-        local read_file = function(filename)
-            local code = ""
-            for line in io.lines(filename) do code = code .. line .. "\n" end
-            result = awful.util.eval(code)
-            if result then
-                naughty.notify({
-                    preset = naughty.config.presets.normal,
-                    title  = "Output",
-                    text   = result
-                })
-            end
-        end
-
-        awful.prompt.run(
-            { prompt = "Run Lua script: " }, chrome.promptbox[mouse.screen].widget,
-            read_file, nil, awful.util.getdir("cache") .. "/history_exec"
-        )
-    end),
-
-    awful.key({modkey}, ';', function()
-        local matcher = function (c)
-            return awful.rules.match(c, {class = 'URxvt'})
-        end
-        awful.client.run_or_raise(terminal, matcher)
-    end),
 
     -- Execute
 	awful.key({ modkey }, "e", function ()
@@ -489,18 +451,19 @@ clientkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle ),
 
     -- Set as master
-    awful.key({ modkey, "Control" }, "Return", function(c)
-        c:swap(awful.client.getmaster())
+    awful.key({ modkey }, "Return", function(c)
+        local master = awful.client.getmaster()
+        if c == master then
+            master = awful.client.focus.history.get(1, 1) or master
+        end
+        c:swap(master)
     end),
 
     -- Redraw
     awful.key({ modkey, "Shift" }, "r", function(c) c:redraw() end),
 
-    -- Set on top
-    awful.key({ modkey }, "t", function(c) c.ontop = not c.ontop end),
-
     -- Set sticky (stays on all tags)
-    awful.key({ modkey, "Shift" }, "/", function(c) c.sticky = not c.sticky end)
+    awful.key({ modkey }, "0", function(c) c.sticky = not c.sticky end)
 )
 
 ------------------------------------------------------------------------------

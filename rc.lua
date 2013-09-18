@@ -2,7 +2,7 @@
 -- Vars
 local homedir    = os.getenv("HOME") .. "/.config/awesome"
 local terminal   = "/usr/bin/urxvtc"
-local terminal2  = terminal .. " -fn 'xft:Dina:pixelsize=8' -fb 'xft:Dina:pixelsize=8'"
+local terminal2  = terminal .. " -fn 'xft:Terminus:pixelsize=14' -fb 'xft:Terminus:pixelsize=14'"
 local editor     = "vim"
 local editor_cmd = terminal .. " -e " .. editor
 local modkey     = os.getenv("AWESOME_TEST") and "135" or "Mod4"
@@ -305,16 +305,6 @@ local globalkeys = awful.util.table.join(
             awful.client.focus.byidx(-1)
             if client.focus then client.focus:raise() end
         end),
-    awful.key({ modkey }, "l",
-        function ()
-            awful.client.focus.bydirection("right")
-            if client.focus then client.focus:raise() end
-        end),
-    awful.key({ modkey }, "h",
-        function ()
-            awful.client.focus.bydirection("left")
-            if client.focus then client.focus:raise() end
-        end),
 
     -- Swapping
     awful.key({ modkey, "Shift" }, "j",
@@ -325,18 +315,20 @@ local globalkeys = awful.util.table.join(
         function ()
             awful.client.swap.byidx(-1)
         end),
-    awful.key({ modkey, "Shift" }, "h",
-        function ()
-            awful.client.swap.bydirection("left")
-        end),
-    awful.key({ modkey, "Shift" }, "l",
-        function ()
-            awful.client.swap.bydirection("right")
-        end),
+
+    -- Move current client to screen 2
+    awful.key({ modkey, "Shift" }, "h", function(c)
+        awful.client.movetoscreen(c, 2)
+    end),
+
+    -- Move current client to screen 1
+    awful.key({ modkey, "Shift" }, "l", function(c)
+        awful.client.movetoscreen(c, 1)
+    end),
 
     -- Screen changing
-    awful.key({ modkey }, "F1", function() awful.screen.focus(2) end),
-    awful.key({ modkey }, "F2", function() awful.screen.focus(1) end),
+    awful.key({ modkey, "Control" }, "h", function() awful.screen.focus(2) end),
+    awful.key({ modkey, "Control" }, "l", function() awful.screen.focus(1) end),
 
     -- Exec terminals, quit and restart
     awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal) end),
@@ -367,16 +359,12 @@ local globalkeys = awful.util.table.join(
     end),
 
     -- Increase/decrease master window width
-    awful.key({ modkey }, "]", function () awful.tag.incmwfact(0.05) end),
-    awful.key({ modkey }, "[", function () awful.tag.incmwfact(-0.05) end),
+    awful.key({ modkey }, "l", function () awful.tag.incmwfact(0.05) end),
+    awful.key({ modkey }, "h", function () awful.tag.incmwfact(-0.05) end),
 
     -- Increase/decrease the number of master windows
-    awful.key({ modkey, "Shift" }, "]", function () awful.tag.incnmaster( 1) end),
-    awful.key({ modkey, "Shift" }, "[", function () awful.tag.incnmaster(-1) end),
-
-    -- Increase/decrease the number of column windows
-    awful.key({ modkey, "Shift", "Control" }, "]", function () awful.tag.incncol( 1) end),
-    awful.key({ modkey, "Shift", "Control" }, "[", function () awful.tag.incncol(-1) end),
+    awful.key({ modkey, }, "i", function () awful.tag.incnmaster( 1) end),
+    awful.key({ modkey, }, "d", function () awful.tag.incnmaster(-1) end),
 
     -- Move all left or right
     --[[
@@ -547,9 +535,36 @@ awful.rules.rules = {
     },
 
     {
+        rule = { class = "Chromium" },
+        callback = function(c)
+            -- Chromium Developer Tools
+            if string.match(c.name, "Untitled") then
+                awful.client.property.set(c, "floating", false)
+                client.focus = awful.client.getmaster()
+            end
+        end
+    },
+
+    {
         rule = { class = "Pidgin" },
         except = { role = "conversation" },
         properties = { floating = true }
+    },
+
+    {
+        rule = { class = "MPlayer" },
+        callback = function(c)
+            c:raise(c)
+            awful.client.property.set(c, "ontop", true)
+        end
+    },
+
+    {
+        rule = { class = "feh" },
+        callback = function(c)
+            c:raise(c)
+            awful.client.property.set(c, "ontop", true)
+        end
     },
 
     -- Set Firefox to always map on tags number 5 of screen 1.
@@ -625,4 +640,3 @@ end)
 client.connect_signal("unfocus", function(c)
     c.border_color = beautiful.border_normal
 end)
-

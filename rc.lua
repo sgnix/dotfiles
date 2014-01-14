@@ -2,7 +2,7 @@
 -- Vars
 local homedir    = os.getenv("HOME") .. "/.config/awesome"
 local terminal   = "/usr/bin/urxvtc"
-local terminal2  = terminal .. " -fn 'xft:Terminus:pixelsize=14' -fb 'xft:Terminus:pixelsize=14'"
+local terminal2  = terminal .. " -fn 'xft:Dina:pixelsize=10' -fb 'xft:Dina:pixelsize=10'"
 local editor     = "vim"
 local editor_cmd = terminal .. " -e " .. editor
 local modkey     = os.getenv("AWESOME_TEST") and "135" or "Mod4"
@@ -317,18 +317,18 @@ local globalkeys = awful.util.table.join(
         end),
 
     -- Move current client to screen 2
-    awful.key({ modkey, "Shift" }, "h", function(c)
+    awful.key({ modkey, "Shift" }, "[", function(c)
         awful.client.movetoscreen(c, 2)
     end),
 
     -- Move current client to screen 1
-    awful.key({ modkey, "Shift" }, "l", function(c)
+    awful.key({ modkey, "Shift" }, "]", function(c)
         awful.client.movetoscreen(c, 1)
     end),
 
     -- Screen changing
-    awful.key({ modkey, "Control" }, "h", function() awful.screen.focus(2) end),
-    awful.key({ modkey, "Control" }, "l", function() awful.screen.focus(1) end),
+    awful.key({ modkey }, "[", function() awful.screen.focus(2) end),
+    awful.key({ modkey }, "]", function() awful.screen.focus(1) end),
 
     -- Exec terminals, quit and restart
     awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal) end),
@@ -355,7 +355,7 @@ local globalkeys = awful.util.table.join(
     -- Move to the next screen
     --awful.key({ modkey }, "s", function () awful.screen.focus_relative(1) end),
     awful.key({ modkey }, "s", function ()
-        awful.util.spawn("/home/sge/sbin/switch-screens", false)
+        awful.util.spawn("/home/sge/sbin/switch-screens x", false)
     end),
 
     -- Increase/decrease master window width
@@ -435,6 +435,9 @@ local globalkeys = awful.util.table.join(
 -- Client keys
 -------------------------------------------------------------------------------
 clientkeys = awful.util.table.join(
+
+    -- Focus
+    awful.key({ modkey }, ";", function(c) c:emit_signal('focus') end),
 
     -- Close window
     awful.key({ modkey }, "w", function(c) c:kill() end),
@@ -580,7 +583,7 @@ awful.rules.rules = {
 local floaters = {
     "MPlayer", "feh", "Avidemux2_gtk", "gimp", "ADT",
     "emulator64-arm", "Gpick", "Skype", "VirtualBox",
-    "Bitcoin-qt", "Wireshark"
+    "Bitcoin-qt", "Litecoin-qt", "Feathercoin-qt", "Wireshark"
 }
 
 for _, name in ipairs(floaters) do
@@ -626,7 +629,7 @@ client.connect_signal("focus", function(c)
     c.border_color = beautiful.border_high;
 
     if focus_timer then focus_timer:stop() end
-    focus_timer = timer({timeout = 3})
+    focus_timer = timer({timeout = 1})
 
     focus_timer:connect_signal("timeout", function()
         if c == client.focus then

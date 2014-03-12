@@ -7,18 +7,20 @@ local editor     = "vim"
 local editor_cmd = terminal .. " -e " .. editor
 local modkey     = os.getenv("AWESOME_TEST") and "135" or "Mod4"
 
--- Standard awesome library
-awful = require("awful")
+-- Standard awesome libraries
+awful   = require("awful")
+naughty = require("naughty")
+vicious = require("vicious")
+
 awful.rules = require("awful.rules")
 require("awful.autofocus")
 
 -- Libs
 local wibox      = require("wibox")
-local naughty    = require("naughty")
-local vicious    = require("vicious")
 local beautiful  = require("beautiful")
 local separator  = require("lib/separator")
 local ipaddr     = require("lib/ipaddr")
+local outside    = require("lib/outside")
 local dmenu      = require("lib/dmenu")
 local layoutchar = require("lib/layoutchar")
 
@@ -597,6 +599,15 @@ for _, name in ipairs(floaters) do
     })
 end
 
+-- Outside files to execute, using vicious
+(function()
+    local w = wibox.widget.textbox()
+    local filename = "/tmp/awesome.lua"
+    vicious.register(w, outside, function(code)
+        awful.util.eval(code);
+    end, 1, filename)
+end)()
+
 -------------------------------------------------------------
 -- Signals
 -------------------------------------------------------------
@@ -647,3 +658,4 @@ end)
 client.connect_signal("unfocus", function(c)
     c.border_color = beautiful.border_normal
 end)
+

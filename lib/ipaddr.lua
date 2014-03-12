@@ -17,7 +17,11 @@ local function worker()
     local ws = f:read("*all")
     f:close()
 
-    return ws or 'n/a'
+    if #ws > 8 then
+        return ws
+    else
+        return 'n/a'
+    end
 end
 -- }}}
 

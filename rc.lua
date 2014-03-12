@@ -18,7 +18,7 @@ local naughty    = require("naughty")
 local vicious    = require("vicious")
 local beautiful  = require("beautiful")
 local separator  = require("lib/separator")
-local fread      = require("lib/fread")
+local ipaddr     = require("lib/ipaddr")
 local dmenu      = require("lib/dmenu")
 local layoutchar = require("lib/layoutchar")
 
@@ -182,24 +182,28 @@ local widget = {
 
     -- Wifi
     wifi = (function()
-        local obj = fread{ url = homedir .. "/bin/wifi.sh wlp3s0" }
-        return obj.w
+        local w = wibox.widget.textbox()
+        vicious.register(w, vicious.widgets.wifi, "${ssid}", 3600, 'wlp3s0')
+        return w
     end)(),
 
     -- Weather
     weather = (function()
-        local obj = fread{
-            url     = homedir .. "/bin/weather.sh 97223",
-            timeout = 20 * 60
-        }
-        return obj.w
+        local w = wibox.widget.textbox()
+        vicious.register(w, vicious.widgets.weather, "${sky}: ${tempf}F", 600, 'KHIO')
+        return w
     end)(),
 
-    -- IP ADDRESS
+    -- IP Address
     ipaddr = (function()
-        local obj = fread{ url = "curl -s http://icanhazip.com" }
-        return obj.w
+        local w = wibox.widget.textbox()
+        w:connect_signal("mouse::enter", function()
+            vicious.force({ ipaddr = w })
+        end)
+        vicious.register(w, ipaddr, "", 3600)
+        return w
     end)()
+
 }
 
 ---------------------------------------------------------------------------

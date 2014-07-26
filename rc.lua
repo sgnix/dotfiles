@@ -3,6 +3,7 @@
 local homedir    = os.getenv("HOME") .. "/.config/awesome"
 local terminal   = "/usr/bin/urxvtc"
 local terminal2  = terminal .. " -fn 'xft:Dina:pixelsize=10' -fb 'xft:Dina:pixelsize=10'"
+local terminal3  = terminal .. " -fn 'xft:Consolas:pixelsize=20' -fb 'xft:Consolas:pixelsize=20'"
 local editor     = "vim"
 local editor_cmd = terminal .. " -e " .. editor
 local modkey     = os.getenv("AWESOME_TEST") and "135" or "Mod4"
@@ -93,7 +94,7 @@ local tags = {
     layouts = {
         awful.layout.suit.tile,
         awful.layout.suit.tile,
-        awful.layout.suit.monocle,
+        awful.layout.suit.tile.bottom,
         awful.layout.suit.tile.bottom,
         awful.layout.suit.tile,
         awful.layout.suit.tile,
@@ -130,13 +131,13 @@ local widget = {
         return dmenu({
             chromium   = "chromium",
             dwb        = "dwb",
+            luakit     = "luakit",
             gvim       = function() to_tag( 4, "gvim", "Gvim" ) end,
             vifm       = terminal .. " -e vifm",
-            music      = terminal .. " -e vifm " .. os.getenv("HOME") .. "/mus",
             down       = terminal .. " -e vifm " .. os.getenv("HOME") .. "/down",
-            pidgin     = function() to_tag( 6, "pidgin", "Pidgin") end,
-            firefox    = function() to_tag( 5, "firefox", "Firefox" ) end,
+            firefox    = "firefox",
             virtualbox = function() to_tag( 9, "virtualbox", "VirtualBox" ) end,
+            xsane      = "xsane 'hpaio:/net/Photosmart_C4700_series?ip=10.0.0.17'",
             suspend    = function()
                 vicious.suspend()
                 awful.util.spawn("systemctl suspend")
@@ -339,6 +340,7 @@ local globalkeys = awful.util.table.join(
     -- Exec terminals, quit and restart
     awful.key({ modkey, "Shift"   }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "Return", function () awful.util.spawn(terminal2) end),
+    awful.key({ modkey }, "space",  function () awful.util.spawn(terminal3) end),
     -- Too dangerous to restart with the keyboard
     -- awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
@@ -587,9 +589,9 @@ awful.rules.rules = {
 
 -- Put all classes you need floating here
 local floaters = {
-    "MPlayer", "feh", "Avidemux2_gtk", "gimp", "ADT",
+    "MPlayer", "feh", "ADT",
     "emulator64-arm", "Gpick", "Skype", "VirtualBox",
-    "Bitcoin-qt", "Litecoin-qt", "Feathercoin-qt", "Wireshark"
+    "Bitcoin-qt", "Litecoin-qt", "Xsane"
 }
 
 for _, name in ipairs(floaters) do

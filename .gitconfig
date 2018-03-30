@@ -1,9 +1,18 @@
-[push]
-	default = simple
 [user]
 	name = Stefan Geneshky
-	email = stefanguen@gmail.com
-[filter "media"]
-	required = true
-	clean = git media clean %f
-	smudge = git media smudge %f
+	email = stefan.geneshky@projecticeland.net
+
+[alias]
+    lo = log --oneline
+    dt = difftool
+    dtc = difftool --cached
+    st = status
+    ll = pull
+    ca = commit -av
+    co = checkout
+    off = checkout master-offcycle
+    mas = checkout master
+    dev = checkout sge/GEM-10086
+
+[diff]
+    tool = vimdiff

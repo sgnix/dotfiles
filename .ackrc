@@ -1,0 +1,5 @@
+--ignore-dir=node_modules 
+--ignore-dir=target 
+--ignore-dir=vendor 
+
+--type-add=config:ext:conf,config,cfg

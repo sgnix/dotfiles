@@ -3,19 +3,11 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'flazz/vim-colorschemes'
-Plug 'Raimondi/delimitMate'
 Plug 'mileszs/ack.vim'
-Plug 'troydm/easybuffer.vim'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-colorscheme-switcher'
-Plug 'kchmck/vim-coffee-script'
-Plug 'https://github.com/genoma/vim-less.git'
-Plug 'https://github.com/leafgarland/typescript-vim.git'
-"Plug 'hallison/vim-markdown'
-"Plug 'AutoComplPop'
-"Plug 'fatih/vim-go'
-"Plug 'zah/nimrod.vim'
-"Plug 'https://github.com/lambdatoast/elm.vim.git'
+Plug 'derekwyatt/vim-scala'
+Plug 'tpope/vim-fugitive'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'scrooloose/nerdtree'
 
 call plug#end()
 "------------------------
@@ -43,9 +35,6 @@ set showcmd
 set splitbelow
 set splitright
 
-" Move cursor through whitespace
-"set ve=all
-
 set ruler
 set backupdir=./.backup,/tmp
 set directory=./.backup,/tmp
@@ -57,99 +46,46 @@ set vb t_vb=
 set incsearch
 set nohlsearch
 
+" look for tags up the dir hierarchy
+set tags=tags;/
+
 " Remap jj to Escape
 inoremap jj <Esc>
 inoremap ,, =>
-inoremap ,. ->
-nmap <C-e> :e#<CR>
 nmap g/ :Ex<CR>
-nmap g' :EasyBuffer<CR>
+nmap g' :ToggleBufExplorer<CR>
+nmap <C-N> :NERDTree<CR>
 
 " PageUp and PageDown
 " Shift-Space and Space
 map _ <PageUp>
 map <Space> <PageDown>
 
-" comment/uncomment blocks of code
-nmap \c V%:s/^/#/gi<Enter>
-nmap \C V%:s/^#//gi<Enter>
-vmap \c :s/^/#/gi<Enter>
-vmap \C :s/^#//gi<Enter>
-
-" perl
-vmap \pt :!perltidy<Enter>
-nmap \pt V%:!perltidy<Enter>
-imap \ps my $self = shift;<Enter>
-inoremap \sub => sub {<Return>};<UP><Esc>o<TAB>
-nmap \pf :Ack "^\s*sub\s+\w+" %<Enter>
-
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" paste
-nmap \po :set paste<Enter>o
-nmap \pp :set nopaste<Enter>
-
-" Set English spelling but don't autospell
-setlocal spell spelllang=en_us
-set nospell
-
 " Syntax highlight
 filetype plugin on
 syntax on
-" let g:loaded_matchparen=1
 
-" Status line
-set laststatus=2
-" set statusline=%{hostname()}%{fugitive#statusline()}\:%f[%M%R%H]%=\ %l,%v\ \:\ %p%%
+"colorscheme cobalt2
+"colorscheme candyman
+"colorscheme calmar256-dark
+"colorscheme Benokai
+"colorscheme cabin
+"colorscheme badwolf
+colorscheme mushroom
+"colorscheme jellybeans
+"colorscheme last256
+"colorscheme lettuce
+"colorscheme lodestone
+
 set statusline=%f\ %M%R%H%=\ %l,%v\ \:\ %p%%
-
-" Set terminal title
-autocmd BufEnter * let &titlestring = hostname() . ": vim(" . expand("%:t") . ")"
-
-" Syntax
-au BufNewFile,BufRead *.psgi  set filetype=perl
-au BufNewFile,BufRead *.tx    set filetype=tx
-au BufNewFile,BufRead *.less  set filetype=less
-au BufNewFile,BufRead *.tt    set filetype=tt2html
-au BufNewFile,BufRead *.moon  set filetype=moon
-au BufNewFile,BufRead *.dart  set filetype=dart
-au BufNewFile,BufRead *.nim   set filetype=nimrod
-
-autocmd Filetype html       setlocal ts=2 sts=2 sw=2
-autocmd Filetype tt2html    setlocal ts=2 sts=2 sw=2
-autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
-autocmd Filetype less       setlocal ts=2 sts=2 sw=2
-autocmd Filetype go         setlocal ts=3 noexpandtab nosmarttab
-
-" CoffeeScript
-autocmd BufWritePost *.coffee silent make!
-autocmd QuickFixCmdPost * nested cwindow | redraw!
-
-if has("gui_running")
-  if has("gui_gtk2")
-    set guifont=Consolas\ 10
-  elseif has("gui_macvim")
-    set guifont=Menlo\ Regular:h14
-  endif
-  colo jellybeans
-else
-  colorscheme jellybeans
-endif
+set laststatus=2    " always display statusline
 
 map to :tabnew<CR>
-
-" Remove any trailing whitespace that is in the file
-"autocmd BufRead,BufWrite * if ! &bin | silent! %s/\s\+$//ge | endif
-
-let perl_include_pod = 1
-let delimitMate_expand_space = 1
-let delimitMate_expand_cr = 1
-
-" Turn off AutoComplPop for HTML (annoying)
-let acp_behaviorHtmlOmniLength = -1
 
 " Save sessions
 fu! SaveSess()
@@ -172,3 +108,58 @@ autocmd VimLeave * call SaveSess()
 
 nmap \S :call SaveSess()<CR>
 nmap \s :call RestoreSess()<CR>
+
+let g:ack_default_options = " -s -H --nocolor --nogroup --column"
+
+nnoremap z/ :if AutoHighlightToggle()<Bar>set hls<Bar>endif<CR>
+function! AutoHighlightToggle()
+    let @/ = ''
+    if exists('#auto_highlight')
+        au! auto_highlight
+        augroup! auto_highlight
+        setl updatetime=4000
+        echo 'Highlight current word: off'
+        return 0
+    else
+        augroup auto_highlight
+            au!
+            au CursorHold * let @/ = '\V\<'.escape(expand('<cword>'), '\').'\>'
+        augroup end
+        setl updatetime=500
+        echo 'Highlight current word: ON'
+        return 1
+    endif
+endfunction
+
+
+if exists("+showtabline")
+     function MyTabLine()
+         let s = ''
+         let t = tabpagenr()
+         let i = 1
+         while i <= tabpagenr('$')
+             let buflist = tabpagebuflist(i)
+             let winnr = tabpagewinnr(i)
+             let s .= '%' . i . 'T'
+             let s .= (i == t ? '%1*' : '%2*')
+             let s .= ' '
+             let s .= i . ' '
+             let s .= '%*'
+             let s .= (i == t ? '%#TabLineSel#' : '%#TabLine#')
+             let file = bufname(buflist[winnr - 1])
+             let file = fnamemodify(file, ':p:t')
+             if file == ''
+                 let file = '[No Name]'
+             endif
+             let s .= file
+             let i = i + 1
+         endwhile
+         let s .= '%T%#TabLineFill#%='
+         let s .= (tabpagenr('$') > 1 ? '%999XX' : 'X')
+         return s
+     endfunction
+     set stal=2
+     set tabline=%!MyTabLine()
+endif
+
+set tabline=%!MyTabLine()

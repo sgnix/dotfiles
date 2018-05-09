@@ -8,6 +8,12 @@ Plug 'derekwyatt/vim-scala'
 Plug 'tpope/vim-fugitive'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'scrooloose/nerdtree'
+Plug 'GEverding/vim-hocon'
+Plug 'kien/ctrlp.vim'
+Plug 'kien/rainbow_parentheses.vim'
+Plug 'jceb/vim-hier'
+"Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-colorscheme-switcher'
 
 call plug#end()
 "------------------------
@@ -38,6 +44,9 @@ set splitright
 set ruler
 set backupdir=./.backup,/tmp
 set directory=./.backup,/tmp
+
+set wildignore+=*/target/*,*/node_modules/*,*/vendor/*,*/npm/*,*/python_automation/*
+let g:ctrlp_custom_ignore = '\v[\/]\.(py|svn)$'
 
 " no bell of any kind
 set vb t_vb=
@@ -70,6 +79,11 @@ nnoremap <C-H> <C-W><C-H>
 filetype plugin on
 syntax on
 
+"colorscheme desertink
+"colorscheme deepsea
+"colorscheme darth
+"colorscheme colorsbox-faff
+"colorscheme charged-256
 "colorscheme cobalt2
 "colorscheme candyman
 "colorscheme calmar256-dark
@@ -82,10 +96,24 @@ colorscheme mushroom
 "colorscheme lettuce
 "colorscheme lodestone
 
+if &diff
+    colorscheme lettuce
+    set nocursorline
+endif
+
 set statusline=%f\ %M%R%H%=\ %l,%v\ \:\ %p%%
 set laststatus=2    " always display statusline
 
 map to :tabnew<CR>
+
+if has("gui_running")
+    set guifont=Menlo\ Regular:h16
+endif
+
+" Make vim read external changes on focus and buffer change
+if !has("gui_running")
+    au FocusGained,BufEnter * :checktime
+endif
 
 " Save sessions
 fu! SaveSess()
@@ -111,6 +139,7 @@ nmap \s :call RestoreSess()<CR>
 
 let g:ack_default_options = " -s -H --nocolor --nogroup --column"
 
+" Auto-highlight the current word
 nnoremap z/ :if AutoHighlightToggle()<Bar>set hls<Bar>endif<CR>
 function! AutoHighlightToggle()
     let @/ = ''
@@ -131,35 +160,51 @@ function! AutoHighlightToggle()
     endif
 endfunction
 
-
-if exists("+showtabline")
-     function MyTabLine()
-         let s = ''
-         let t = tabpagenr()
-         let i = 1
-         while i <= tabpagenr('$')
-             let buflist = tabpagebuflist(i)
-             let winnr = tabpagewinnr(i)
-             let s .= '%' . i . 'T'
-             let s .= (i == t ? '%1*' : '%2*')
-             let s .= ' '
-             let s .= i . ' '
-             let s .= '%*'
-             let s .= (i == t ? '%#TabLineSel#' : '%#TabLine#')
-             let file = bufname(buflist[winnr - 1])
-             let file = fnamemodify(file, ':p:t')
-             if file == ''
-                 let file = '[No Name]'
-             endif
-             let s .= file
-             let i = i + 1
-         endwhile
-         let s .= '%T%#TabLineFill#%='
-         let s .= (tabpagenr('$') > 1 ? '%999XX' : 'X')
-         return s
-     endfunction
-     set stal=2
-     set tabline=%!MyTabLine()
+" Custom tabs
+if !has("gui_running")
+    if exists("+showtabline")
+         function MyTabLine()
+             let s = ''
+             let t = tabpagenr()
+             let i = 1
+             while i <= tabpagenr('$')
+                 let buflist = tabpagebuflist(i)
+                 let winnr = tabpagewinnr(i)
+                 let s .= '%' . i . 'T'
+                 let s .= (i == t ? '%1*' : '%2*')
+                 let s .= ' '
+                 let s .= i . ' '
+                 let s .= '%*'
+                 let s .= (i == t ? '%#TabLineSel#' : '%#TabLine#')
+                 let file = bufname(buflist[winnr - 1])
+                 let file = fnamemodify(file, ':p:t')
+                 if file == ''
+                     let file = '[No Name]'
+                 endif
+                 let s .= file
+                 let i = i + 1
+             endwhile
+             let s .= '%T%#TabLineFill#%='
+             let s .= (tabpagenr('$') > 1 ? '%999XX' : 'X')
+             return s
+         endfunction
+         set stal=2
+         set tabline=%!MyTabLine()
+    endif
 endif
 
 set tabline=%!MyTabLine()
+
+" RainbowParethesis
+"au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+noremap <silent> <Leader>ra :RainbowParenthesesToggle<CR>
+
+" sbt quickfix stuff
+set errorformat=%E\ %#[error]\ %#%f:%l:\ %m,%-Z\ %#[error]\ %p^,%-C\ %#[error]\ %m
+set errorformat+=,%W\ %#[warn]\ %#%f:%l:\ %m,%-Z\ %#[warn]\ %p^,%-C\ %#[warn]\ %m
+set errorformat+=,%-G%.%#
+noremap <silent> <Leader>ff :cf target/sbt.quickfix<CR>
+noremap <silent> <Leader>fn :cn<CR>

@@ -6,3 +6,4 @@
 --type-add=config:ext:conf,config,cfg
 --type-add=routes:ext:routes
 --type-add=routes:is:routes
+--type-add=sbt:ext:sbt

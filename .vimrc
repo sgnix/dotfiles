@@ -7,11 +7,11 @@ Plug 'mileszs/ack.vim'
 Plug 'derekwyatt/vim-scala'
 Plug 'tpope/vim-fugitive'
 Plug 'jlanzarotta/bufexplorer'
-Plug 'scrooloose/nerdtree'
 Plug 'GEverding/vim-hocon'
 Plug 'kien/ctrlp.vim'
-Plug 'kien/rainbow_parentheses.vim'
-Plug 'jceb/vim-hier'
+"Plug 'scrooloose/nerdtree'
+"Plug 'kien/rainbow_parentheses.vim'
+"Plug 'jceb/vim-hier'
 "Plug 'xolox/vim-misc'
 "Plug 'xolox/vim-colorscheme-switcher'
 
@@ -45,8 +45,9 @@ set ruler
 set backupdir=./.backup,/tmp
 set directory=./.backup,/tmp
 
-set wildignore+=*/target/*,*/node_modules/*,*/vendor/*,*/npm/*,*/python_automation/*
-let g:ctrlp_custom_ignore = '\v[\/]\.(py|svn)$'
+"set wildignore+=*/node_modules/*,*/vendor/*,*/npm/*,*/python_automation/*
+let g:ctrlp_by_filename = 1
+let g:ctrlp_user_command = 'find %s -type f | egrep "\.(scala|html|conf|sbt)$" | egrep -v "node_modules|vendor"'
 
 " no bell of any kind
 set vb t_vb=
@@ -63,7 +64,6 @@ inoremap jj <Esc>
 inoremap ,, =>
 nmap g/ :Ex<CR>
 nmap g' :ToggleBufExplorer<CR>
-nmap <C-N> :NERDTree<CR>
 
 " PageUp and PageDown
 " Shift-Space and Space
@@ -84,13 +84,13 @@ syntax on
 "colorscheme darth
 "colorscheme colorsbox-faff
 "colorscheme charged-256
-"colorscheme cobalt2
+colorscheme cobalt2
 "colorscheme candyman
 "colorscheme calmar256-dark
 "colorscheme Benokai
 "colorscheme cabin
 "colorscheme badwolf
-colorscheme mushroom
+"colorscheme mushroom
 "colorscheme jellybeans
 "colorscheme last256
 "colorscheme lettuce
@@ -134,8 +134,9 @@ endfunction
 
 autocmd VimLeave * call SaveSess()
 
-nmap \S :call SaveSess()<CR>
-nmap \s :call RestoreSess()<CR>
+noremap <silent> <Leader>lf :call ScalaFollowTrait()<CR>
+nmap <silent> <Leader>vs :call SaveSess()<CR>
+nmap <silent> <Leader>vr :call RestoreSess()<CR>
 
 let g:ack_default_options = " -s -H --nocolor --nogroup --column"
 
@@ -195,12 +196,11 @@ endif
 
 set tabline=%!MyTabLine()
 
-" RainbowParethesis
-"au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-noremap <silent> <Leader>ra :RainbowParenthesesToggle<CR>
+" -------------------------------------------------
+" Scala stuff
+" -------------------------------------------------
+
+set wildignore+=*.xml,*.jar,*.class,*.json,*.properties,*.cache
 
 " sbt quickfix stuff
 set errorformat=%E\ %#[error]\ %#%f:%l:\ %m,%-Z\ %#[error]\ %p^,%-C\ %#[error]\ %m
@@ -208,3 +208,28 @@ set errorformat+=,%W\ %#[warn]\ %#%f:%l:\ %m,%-Z\ %#[warn]\ %p^,%-C\ %#[warn]\ %
 set errorformat+=,%-G%.%#
 noremap <silent> <Leader>ff :cf target/sbt.quickfix<CR>
 noremap <silent> <Leader>fn :cn<CR>
+
+" Find who uses the trait or class under the cursor
+function! ScalaFollowTrait()
+    let wordUnderCursor = expand("<cword>")
+    execute 'Ack --type=scala "(with|extends)\s+"'.wordUnderCursor
+endfunction
+
+" Ack for the word under cursor
+function! ScalaSearchWord()
+    let wordUnderCursor = expand("<cword>")
+    execute 'Ack --type=scala '.wordUnderCursor
+endfunction
+
+function! ScalaDeclaration()
+    let wordUnderCursor = expand("<cword>")
+    execute 'Ack --type=scala "(trait|class)\s+"'.wordUnderCursor
+endfunction
+
+
+noremap <silent> <Leader>sf :call ScalaFollowTrait()<CR>
+noremap <silent> <Leader>ss :call ScalaSearchWord()<CR>
+noremap <silent> <Leader>sd :call ScalaDeclaration()<CR>
+noremap <silent> <Leader>gs :Gstatus<CR>
+noremap <silent> <Leader>gd :Gdiff<CR>
+noremap <silent> <Leader>gb :Gblame<CR>

@@ -1,6 +1,6 @@
 [user]
 	name = Stefan Geneshky
-	email = stefan.geneshky@projecticeland.net
+	email = sge@pobox.com
 
 [alias]
     lo = log --oneline
@@ -10,9 +10,7 @@
     ll = pull
     ca = commit -av
     co = checkout
-    off = checkout master-offcycle
     mas = checkout master
-    dev = checkout sge/GEM-10086
 
 [diff]
     tool = vimdiff

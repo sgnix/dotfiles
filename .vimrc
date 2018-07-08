@@ -9,11 +9,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'GEverding/vim-hocon'
 Plug 'kien/ctrlp.vim'
+"Plug 'vim-airline/vim-airline'
 "Plug 'scrooloose/nerdtree'
 "Plug 'kien/rainbow_parentheses.vim'
 "Plug 'jceb/vim-hier'
-"Plug 'xolox/vim-misc'
-"Plug 'xolox/vim-colorscheme-switcher'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-colorscheme-switcher'
 
 call plug#end()
 "------------------------
@@ -84,7 +85,7 @@ syntax on
 "colorscheme darth
 "colorscheme colorsbox-faff
 "colorscheme charged-256
-colorscheme cobalt2
+"colorscheme cobalt2
 "colorscheme candyman
 "colorscheme calmar256-dark
 "colorscheme Benokai
@@ -92,7 +93,7 @@ colorscheme cobalt2
 "colorscheme badwolf
 "colorscheme mushroom
 "colorscheme jellybeans
-"colorscheme last256
+colorscheme last256
 "colorscheme lettuce
 "colorscheme lodestone
 

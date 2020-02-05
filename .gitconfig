@@ -11,6 +11,8 @@
     ca = commit -av
     co = checkout
     mas = checkout master
+    fe = fetch --prune origin
+    gr = log --graph --oneline
 
 [diff]
     tool = vimdiff

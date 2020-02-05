@@ -9,12 +9,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'GEverding/vim-hocon'
 Plug 'kien/ctrlp.vim'
-"Plug 'vim-airline/vim-airline'
-"Plug 'scrooloose/nerdtree'
-"Plug 'kien/rainbow_parentheses.vim'
-"Plug 'jceb/vim-hier'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-colorscheme-switcher'
+Plug 'ledger/vim-ledger'
+Plug 'fatih/vim-go'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'cespare/vim-toml'
 
 call plug#end()
 "------------------------
@@ -28,8 +28,8 @@ set autoread
 " Use spaces no tabs
 set expandtab
 set smarttab
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 set hidden
 set nowrap
 set cursorline
@@ -43,12 +43,12 @@ set splitbelow
 set splitright
 
 set ruler
-set backupdir=./.backup,/tmp
-set directory=./.backup,/tmp
+set backupdir=/tmp
+set directory=/tmp
 
 "set wildignore+=*/node_modules/*,*/vendor/*,*/npm/*,*/python_automation/*
 let g:ctrlp_by_filename = 1
-let g:ctrlp_user_command = 'find %s -type f | egrep "\.(scala|html|conf|sbt)$" | egrep -v "node_modules|vendor"'
+let g:ctrlp_user_command = 'find %s -type f | egrep "\.(go|rs|scala|html|conf|sbt)$" | egrep -v "node_modules|vendor"'
 
 " no bell of any kind
 set vb t_vb=
@@ -63,6 +63,7 @@ set tags=tags;/
 " Remap jj to Escape
 inoremap jj <Esc>
 inoremap ,, =>
+inoremap ,. ->
 nmap g/ :Ex<CR>
 nmap g' :ToggleBufExplorer<CR>
 
@@ -80,22 +81,25 @@ nnoremap <C-H> <C-W><C-H>
 filetype plugin on
 syntax on
 
-"colorscheme desertink
 "colorscheme deepsea
-"colorscheme darth
-"colorscheme colorsbox-faff
 "colorscheme charged-256
-"colorscheme cobalt2
 "colorscheme candyman
-"colorscheme calmar256-dark
-"colorscheme Benokai
-"colorscheme cabin
-"colorscheme badwolf
 "colorscheme mushroom
-"colorscheme jellybeans
-colorscheme last256
-"colorscheme lettuce
-"colorscheme lodestone
+"colorscheme last256
+
+"colorscheme 256_noir
+"colo newsprint
+colorscheme oxeded
+
+" Custom colors for this particular colorscheme
+" https://jonasjacek.github.io/colors/
+hi NormalFloat ctermbg=233
+hi TabLineFill ctermfg=Gray ctermbg=Black cterm=NONE
+hi TabLine ctermfg=Gray ctermbg=Black cterm=NONE
+hi TabLineSel ctermfg=Yellow ctermbg=Black cterm=underline,bold
+hi CursorLine ctermfg=NONE ctermbg=235 cterm=NONE
+hi VertSplit ctermfg=Black ctermbg=DarkGray
+hi Visual ctermfg=107 ctermbg=237
 
 if &diff
     colorscheme lettuce
@@ -224,7 +228,7 @@ endfunction
 
 function! ScalaDeclaration()
     let wordUnderCursor = expand("<cword>")
-    execute 'Ack --type=scala "(trait|class)\s+"'.wordUnderCursor
+    execute 'Ack --type=scala "(trait|class|def|val|var|object|type)\s+"'.wordUnderCursor
 endfunction
 
 
@@ -234,3 +238,35 @@ noremap <silent> <Leader>sd :call ScalaDeclaration()<CR>
 noremap <silent> <Leader>gs :Gstatus<CR>
 noremap <silent> <Leader>gd :Gdiff<CR>
 noremap <silent> <Leader>gb :Gblame<CR>
+
+"--------------------------------------------------------
+" Rust Coc
+" -------------------------------------------------------
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+" Highlight symbol under cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+let loaded_matchparen = 1
+
+let g:go_version_warning = 0

@@ -14,6 +14,7 @@ Plug 'xolox/vim-colorscheme-switcher'
 Plug 'ledger/vim-ledger'
 Plug 'fatih/vim-go'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'scalameta/coc-metals', {'do': 'yarn install --frozen-lockfile'}
 Plug 'cespare/vim-toml'
 
 call plug#end()

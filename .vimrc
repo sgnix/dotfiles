@@ -57,6 +57,8 @@ set vb t_vb=
 set incsearch
 set nohlsearch
 
+let loaded_matchparen = 1
+
 " look for tags up the dir hierarchy
 set tags=tags;/
 
@@ -111,60 +113,24 @@ set laststatus=2    " always display statusline
 
 map to :tabnew<CR>
 
-if has("gui_running")
-    set guifont=Menlo\ Regular:h16
-endif
-
 " Make vim read external changes on focus and buffer change
-if !has("gui_running")
-    au FocusGained,BufEnter * :checktime
-endif
+au FocusGained,BufEnter * :checktime
 
 " Save sessions
 fu! SaveSess()
-    if has("gui_running")
-        execute 'mksession! ~/.vim/gsession.vim'
-    else
-        execute 'mksession! ~/.vim/session.vim'
-    endif
+  execute 'mksession! ~/.vim/session.vim'
 endfunction
 
 fu! RestoreSess()
-    if has("gui_running")
-        execute 'so ~/.vim/gsession.vim'
-    else
-        execute 'so ~/.vim/session.vim'
-    endif
+  execute 'so ~/.vim/session.vim'
 endfunction
 
 autocmd VimLeave * call SaveSess()
 
-noremap <silent> <Leader>lf :call ScalaFollowTrait()<CR>
 nmap <silent> <Leader>vs :call SaveSess()<CR>
 nmap <silent> <Leader>vr :call RestoreSess()<CR>
 
 let g:ack_default_options = " -s -H --nocolor --nogroup --column"
-
-" Auto-highlight the current word
-nnoremap z/ :if AutoHighlightToggle()<Bar>set hls<Bar>endif<CR>
-function! AutoHighlightToggle()
-    let @/ = ''
-    if exists('#auto_highlight')
-        au! auto_highlight
-        augroup! auto_highlight
-        setl updatetime=4000
-        echo 'Highlight current word: off'
-        return 0
-    else
-        augroup auto_highlight
-            au!
-            au CursorHold * let @/ = '\V\<'.escape(expand('<cword>'), '\').'\>'
-        augroup end
-        setl updatetime=500
-        echo 'Highlight current word: ON'
-        return 1
-    endif
-endfunction
 
 " Custom tabs
 if !has("gui_running")
@@ -201,50 +167,26 @@ endif
 
 set tabline=%!MyTabLine()
 
-" -------------------------------------------------
-" Scala stuff
-" -------------------------------------------------
-
 set wildignore+=*.xml,*.jar,*.class,*.json,*.properties,*.cache
 
-" sbt quickfix stuff
-set errorformat=%E\ %#[error]\ %#%f:%l:\ %m,%-Z\ %#[error]\ %p^,%-C\ %#[error]\ %m
-set errorformat+=,%W\ %#[warn]\ %#%f:%l:\ %m,%-Z\ %#[warn]\ %p^,%-C\ %#[warn]\ %m
-set errorformat+=,%-G%.%#
-noremap <silent> <Leader>ff :cf target/sbt.quickfix<CR>
-noremap <silent> <Leader>fn :cn<CR>
-
-" Find who uses the trait or class under the cursor
-function! ScalaFollowTrait()
-    let wordUnderCursor = expand("<cword>")
-    execute 'Ack --type=scala "(with|extends)\s+"'.wordUnderCursor
-endfunction
-
-" Ack for the word under cursor
-function! ScalaSearchWord()
-    let wordUnderCursor = expand("<cword>")
-    execute 'Ack --type=scala '.wordUnderCursor
-endfunction
-
-function! ScalaDeclaration()
-    let wordUnderCursor = expand("<cword>")
-    execute 'Ack --type=scala "(trait|class|def|val|var|object|type)\s+"'.wordUnderCursor
-endfunction
-
-
-noremap <silent> <Leader>sf :call ScalaFollowTrait()<CR>
-noremap <silent> <Leader>ss :call ScalaSearchWord()<CR>
-noremap <silent> <Leader>sd :call ScalaDeclaration()<CR>
-noremap <silent> <Leader>gs :Gstatus<CR>
-noremap <silent> <Leader>gd :Gdiff<CR>
-noremap <silent> <Leader>gb :Gblame<CR>
+let g:go_version_warning = 0
 
 "--------------------------------------------------------
-" Rust Coc
+" Coc
 " -------------------------------------------------------
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
 " Highlight symbol under cursor
 autocmd CursorHold * silent call CocActionAsync('highlight')
 " Remap for rename current word
@@ -267,6 +209,3 @@ endfunction
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-let loaded_matchparen = 1
-
-let g:go_version_warning = 0

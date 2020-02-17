@@ -1,0 +1,7 @@
+{
+  "suggest.autoTrigger":"trigger",
+  "rust.clippy_preference":"on",
+  "coc.preferences.formatOnSaveFiletypes":["rust"],
+  "rust.build_on_save":true,
+  "rust.clippy_preference":"on"
+}

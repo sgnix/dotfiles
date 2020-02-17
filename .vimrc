@@ -10,7 +10,7 @@ set shiftwidth=2
 set tabstop=2
 set hidden
 set nowrap
-set cursorline
+set nocursorline
 
 " Show the command you're typing
 set showcmd

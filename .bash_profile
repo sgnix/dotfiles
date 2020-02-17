@@ -6,7 +6,9 @@ export TZ=America/Los_Angeles
 
 alias ll='ls -l'
 alias la='ls -al'
-alias vim=nvim
+alias rvim='nvim -u ~/.config/nvim/rust.vim'
+alias svim='nvim -u ~/.config/nvim/scala.vim'
+alias gvim='nvim -u ~/.config/nvim/go.vim'
 
 # Git branch in prompt.
 parse_git_branch() {

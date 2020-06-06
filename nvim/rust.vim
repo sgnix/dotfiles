@@ -1,3 +1,6 @@
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+
 " Begin of vim-bundle
 " -------------------
 call plug#begin('~/.vim/plugged')
@@ -17,7 +20,7 @@ source ~/.config/nvim/init/color.vim
 source ~/.config/nvim/init/session.vim
 
 let g:ctrlp_by_filename = 1
-let g:ctrlp_user_command = 'find %s -type f | egrep "\.(rs|toml)$"'
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 
 "--------------------------------------------------------
 " Coc

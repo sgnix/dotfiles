@@ -38,8 +38,8 @@ set tags=tags;/
 
 " Remap jj to Escape
 inoremap jj <Esc>
-inoremap ,, =>
-inoremap ,. ->
+ab ,, =>
+ab ,. ->
 nmap g/ :Ex<CR>
 nmap g' :ToggleBufExplorer<CR>
 

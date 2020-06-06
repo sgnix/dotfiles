@@ -9,6 +9,7 @@ alias la='ls -al'
 alias rvim='nvim -u ~/.config/nvim/rust.vim'
 alias svim='nvim -u ~/.config/nvim/scala.vim'
 alias gvim='nvim -u ~/.config/nvim/go.vim'
+alias vvim='nvim -u ~/.config/nvim/vue.vim'
 
 # Git branch in prompt.
 parse_git_branch() {

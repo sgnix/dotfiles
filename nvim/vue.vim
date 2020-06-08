@@ -15,6 +15,8 @@ Plug 'posva/vim-vue'
 call plug#end()
 "------------------------
 
+colo oxeded
+
 source ~/.config/nvim/init/common.vim
 source ~/.config/nvim/init/color.vim
 source ~/.config/nvim/init/session.vim
@@ -22,9 +24,10 @@ source ~/.config/nvim/init/session.vim
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 set wildignore+=node_modules/**
 
-let g:vue_pre_processors = ['typescript', 'scss']
+let g:vue_pre_processors = 'detect_on_enter'
 
 ab _div <div><Enter></div><Up>
+ab _tml <template><Enter></template><Up>
 ab edc export default class
 ab ede export default
 ab itt it("", () => {<Enter>})

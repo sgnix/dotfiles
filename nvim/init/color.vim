@@ -6,7 +6,7 @@
 
 "colorscheme 256_noir
 "colo newsprint
-colorscheme oxeded
+"colorscheme oxeded
 
 " Custom colors for this particular colorscheme
 " https://jonasjacek.github.io/colors/

@@ -14,6 +14,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
+colo oxeded
+
 source ~/.config/nvim/init/common.vim
 source ~/.config/nvim/init/color.vim
 source ~/.config/nvim/init/session.vim

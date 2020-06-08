@@ -10,6 +10,10 @@ Plug 'ledger/vim-ledger'
 Plug 'cespare/vim-toml'
 call plug#end()
 
+colo newsprint
+
 source ~/.config/nvim/init/common.vim
 source ~/.config/nvim/init/color.vim
 source ~/.config/nvim/init/session.vim
+
+"set nocursorline

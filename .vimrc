@@ -3,6 +3,8 @@ set ai
 set nu
 set autoread
 
+colo pablo
+
 " Use spaces no tabs
 set expandtab
 set smarttab

@@ -15,7 +15,7 @@ Plug 'posva/vim-vue'
 call plug#end()
 "------------------------
 
-colo oxeded
+colo basic-dark
 
 source ~/.config/nvim/init/common.vim
 source ~/.config/nvim/init/color.vim

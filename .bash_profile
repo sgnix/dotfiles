@@ -11,6 +11,7 @@ alias svim='nvim -u ~/.config/nvim/scala.vim'
 alias gvim='nvim -u ~/.config/nvim/go.vim'
 alias vvim='nvim -u ~/.config/nvim/vue.vim'
 alias pvim='nvim -u ~/.config/nvim/perl.vim'
+alias mysql='/usr/local/opt/mysql-client/bin/mysql'
 
 # Git branch in prompt.
 parse_git_branch() {
@@ -23,3 +24,4 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 export GOPATH=$HOME/go
 export PATH="$GOPATH/bin:$PATH"
+

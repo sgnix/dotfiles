@@ -15,8 +15,9 @@ hi TabLineFill ctermfg=Gray ctermbg=Black cterm=NONE
 hi TabLine ctermfg=Gray ctermbg=Black cterm=NONE
 hi TabLineSel ctermfg=Yellow ctermbg=Black cterm=underline,bold
 hi CursorLine ctermfg=NONE ctermbg=235 cterm=NONE
-hi VertSplit ctermfg=Black ctermbg=DarkGray
+hi VertSplit ctermfg=NONE ctermbg=DarkGray
 hi Visual ctermfg=107 ctermbg=237
+hi Comment cterm=italic
 
 if &diff
     colorscheme lettuce

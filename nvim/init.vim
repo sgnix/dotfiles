@@ -7,10 +7,12 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-colorscheme-switcher'
 Plug 'ledger/vim-ledger'
-Plug 'cespare/vim-toml'
 call plug#end()
 
-colo newsprint
+"colo newsprint
+"colo 256_noir
+"colorscheme basic-dark
+colo PaperColor
 
 source ~/.config/nvim/init/common.vim
 source ~/.config/nvim/init/color.vim

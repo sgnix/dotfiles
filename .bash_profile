@@ -25,3 +25,5 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH="$GOPATH/bin:$PATH"
 
+# Scala
+export JAVA_HOME=/usr/local/opt/openjdk

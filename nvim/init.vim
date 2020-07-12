@@ -7,6 +7,7 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-colorscheme-switcher'
 Plug 'ledger/vim-ledger'
+Plug 'preservim/nerdcommenter'
 call plug#end()
 
 "colo newsprint

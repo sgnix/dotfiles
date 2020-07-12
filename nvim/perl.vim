@@ -12,6 +12,7 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'kien/ctrlp.vim'
 Plug 'vim-perl/vim-perl'
 Plug 'cespare/vim-toml'
+Plug 'preservim/nerdcommenter'
 
 call plug#end()
 "------------------------

@@ -11,6 +11,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'kien/ctrlp.vim'
 Plug 'posva/vim-vue'
+Plug 'preservim/nerdcommenter'
 
 call plug#end()
 "------------------------
@@ -31,3 +32,5 @@ ab _tml <template><Enter></template><Up>
 ab edc export default class
 ab ede export default
 ab itt it("", () => {<Enter>})
+ab imm import
+ab //l // eslint-disable-next-line

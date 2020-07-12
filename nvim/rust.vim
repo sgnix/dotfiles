@@ -12,6 +12,7 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'kien/ctrlp.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'cespare/vim-toml'
+Plug 'preservim/nerdcommenter'
 
 call plug#end()
 

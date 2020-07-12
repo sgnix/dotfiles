@@ -60,7 +60,7 @@ window:
   #
   # Values for `startup_mode` (macOS only):
   #   - SimpleFullscreen
-  #startup_mode: Windowed
+  startup_mode: Maximized
 
   # Window title
   #title: Alacritty
@@ -136,7 +136,7 @@ font:
     #style: Bold Italic
 
   # Point size
-  size: 13.0
+  size: 15.0
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
@@ -248,6 +248,35 @@ font:
   #
   #indexed_colors: []
 
+# Colors (Terminal.app)
+colors:
+  # Default colors
+  primary:
+    background: '0x000000'
+    foreground: '0xb6b6b6'
+
+  # Normal colors
+  normal:
+    black:   '0x000000'
+    red:     '0x990000'
+    green:   '0x00a600'
+    yellow:  '0x999900'
+    blue:    '0x0000b2'
+    magenta: '0xb200b2'
+    cyan:    '0x00a6b2'
+    white:   '0xbfbfbf'
+
+  # Bright colors
+  bright:
+    black:   '0x666666'
+    red:     '0xe50000'
+    green:   '0x00d900'
+    yellow:  '0xe5e500'
+    blue:    '0x0000ff'
+    magenta: '0xe500e5'
+    cyan:    '0x00e5e5'
+    white:   '0xe5e5e5'
+
 # Visual Bell
 #
 # Any time the BEL code is received, Alacritty "rings" the visual bell. Once
@@ -338,7 +367,7 @@ working_directory: /Users/sge
 # Send ESC (\x1b) before characters when alt is pressed.
 #alt_send_esc: true
 
-#mouse:
+mouse:
   # Click settings
   #
   # The `double_click` and `triple_click` settings control the time
@@ -348,7 +377,7 @@ working_directory: /Users/sge
   #triple_click: { threshold: 300 }
 
   # If this is `true`, the cursor is temporarily hidden when typing.
-  #hide_when_typing: false
+  hide_when_typing: true
 
   #url:
     # URL launcher

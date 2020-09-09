@@ -12,6 +12,7 @@ alias gvim='nvim -u ~/.config/nvim/go.vim'
 alias vvim='nvim -u ~/.config/nvim/vue.vim'
 alias pvim='nvim -u ~/.config/nvim/perl.vim'
 alias mysql='/usr/local/opt/mysql-client/bin/mysql'
+alias onelogin='pass -c Pyx/perceptyx.onelogin.com/sgeneshky@perceptyx.com'
 
 # Git branch in prompt.
 parse_git_branch() {
@@ -27,3 +28,6 @@ export PATH="$GOPATH/bin:$PATH"
 
 # Scala
 export JAVA_HOME=/usr/local/opt/openjdk
+
+# pass
+export PASSWORD_STORE_DIR=$HOME/Sync/Pass

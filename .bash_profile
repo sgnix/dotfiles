@@ -11,8 +11,9 @@ alias svim='nvim -u ~/.config/nvim/scala.vim'
 alias gvim='nvim -u ~/.config/nvim/go.vim'
 alias vvim='nvim -u ~/.config/nvim/vue.vim'
 alias pvim='nvim -u ~/.config/nvim/perl.vim'
-alias mysql='/usr/local/opt/mysql-client/bin/mysql'
-alias onelogin='pass -c Pyx/perceptyx.onelogin.com/sgeneshky@perceptyx.com'
+alias mysql='/usr/local/opt/mysql-client/bin/mysql --defaults-extra-file=~/src/my.cnf'
+alias todo='nvim ~/Sync/TODO.txt'
+alias cpass='find $PASSWORD_STORE_DIR | sed "s|$PASSWORD_STORE_DIR/||" | grep "\.gpg" | sed "s|\.gpg$||" | peco | xargs pass -c'
 
 # Git branch in prompt.
 parse_git_branch() {

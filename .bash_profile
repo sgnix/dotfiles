@@ -27,8 +27,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH="$GOPATH/bin:$PATH"
 
-# Scala
-export JAVA_HOME=/usr/local/opt/openjdk
+# Java
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
 
 # pass
 export PASSWORD_STORE_DIR=$HOME/Sync/Pass

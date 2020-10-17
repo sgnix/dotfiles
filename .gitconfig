@@ -18,7 +18,8 @@
 	default = simple
 
 [delta]
-  syntax-theme = Monokai Extended
+  #syntax-theme = Monokai Extended
+  syntax-theme = Dracula
   plus-color = "#012800"
   minus-color = "#340001"
   side-by-side = true

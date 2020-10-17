@@ -36,3 +36,6 @@ export PASSWORD_STORE_DIR=$HOME/Sync/Pass
 set -o vi
 bind -m vi-command 'Control-l: clear-screen'
 bind -m vi-insert 'Control-l: clear-screen'
+
+# gnupg
+export GPG_TTY=$(tty)

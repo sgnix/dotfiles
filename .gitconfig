@@ -6,16 +6,13 @@
 	email = sge@pobox.com
 
 [alias]
-    lo = log --oneline
-    dt = difftool
-    dtc = difftool --cached
-    st = status
-    ll = pull
-    ca = commit -av
-    co = checkout
-    mas = checkout master
-    fe = fetch --prune origin
-    gr = log --graph --oneline
+  lo = log --oneline
+  st = status
+  ll = pull
+  ca = commit -av
+  co = checkout
+  fe = fetch --prune origin
+  gr = log --graph --oneline
 
 [push]
 	default = simple

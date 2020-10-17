@@ -1,3 +1,6 @@
+[core]
+  pager = delta
+
 [user]
 	name = Stefan Geneshky
 	email = sge@pobox.com
@@ -14,7 +17,15 @@
     fe = fetch --prune origin
     gr = log --graph --oneline
 
-[diff]
-    tool = vimdiff
 [push]
 	default = simple
+
+[delta]
+  syntax-theme = Monokai Extended
+  plus-color = "#012800"
+  minus-color = "#340001"
+  side-by-side = true
+  line-numbers = true
+
+[interactive]
+  diffFilter = delta --color-only

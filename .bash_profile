@@ -32,3 +32,5 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
 
 # pass
 export PASSWORD_STORE_DIR=$HOME/Sync/Pass
+
+set -o vi
